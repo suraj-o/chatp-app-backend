@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { User } from "../models/userModel.js";
 import ErrorNewobject from "../utils/customErrorObj.js";
 import { TryCatch } from "../middlewares/errorMiddleware.js";
-import { OptionTypes, SignupRequetType } from "./types/usercontrollerType.js";
+import { OptionTypes, SignupRequetType } from "./controllertypes/usercontrollerType.js";
 import { sendCookies } from "../utils/database.js";
 import { compare } from "bcrypt";
 import jwt from "jsonwebtoken"

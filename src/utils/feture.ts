@@ -1,8 +1,8 @@
 import { User } from "../models/userModel.js";
 import {faker} from "@faker-js/faker"
 
-export const emit=(req:any,event:string,users:string[],data?:string)=>{
-console.log(event);
+export const emit=(req:any,event:string,users:any[],data?:string)=>{
+console.log(users);
 }
 
 export const createUSers=async(num:number)=>{

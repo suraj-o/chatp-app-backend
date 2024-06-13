@@ -4,7 +4,7 @@ export interface UserType extends Document {
     password:string,
     email:string,
     username:string,
-    avtar:{
+    avatar:{
         public_Id:string,
         url:string
     },

@@ -1,7 +1,7 @@
-import { UserType } from "../models/types/userModelTypes.js"
+import { ObjectId } from "mongoose"
 
-type Membertypes={
-    _id:string,
+export type Membertypes={
+    _id:string
     name:string,
     avatar:{
         public_Id:string,
