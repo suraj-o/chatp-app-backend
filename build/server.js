@@ -1,4 +1,4 @@
-import express, { urlencoded } from "express";
+import express from "express";
 import { errorMiddlewere } from "./middlewares/errorMiddleware.js";
 import userRoute from "./routes/user.js";
 import { connectDB } from "./utils/database.js";
@@ -22,7 +22,7 @@ app.get("/", (req, res, next) => {
 // middlewares
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieparser());
 app.use('/api/v1/user/', userRoute);
 app.use('/api/v1/chat/', chatRoute);

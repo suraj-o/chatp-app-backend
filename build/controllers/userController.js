@@ -1,9 +1,11 @@
 import { User } from "../models/userModel.js";
 import ErrorNewobject from "../utils/customErrorObj.js";
 import { TryCatch } from "../middlewares/errorMiddleware.js";
-import { sendCookies } from "../utils/database.js";
+import { sendCookies, verifyToken } from "../utils/database.js";
 import { compare } from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Chats } from "../models/chats/chat.js";
+import { createUSers } from "../utils/feture.js";
 export const signup = TryCatch(async (req, res, next) => {
     const { name, email, username, password } = req.body;
     const avatar = req.file;
@@ -66,4 +68,17 @@ export const logout = TryCatch(async (req, res, next) => {
         success: true,
         message: "logged out"
     });
+});
+export const search = TryCatch(async (req, res, next) => {
+    const { name } = req.query;
+    const id = verifyToken(req.cookies["_id"], process.env.JWT_SECRET);
+    const chats = await Chats.find({ members: id, groupchat: false });
+    const allFriends = chats.flatMap((chat) => chat.members);
+    const allExcludeMembers = await User.find({ _id: { $nin: allFriends }, name: {
+            $regex: name?.toString(),
+            $options: "i"
+        } });
+    createUSers(12);
+    res.json({ sucess: true, allExcludeMembers });
+    // const chatsIcludesMe=user
 });

@@ -4,7 +4,7 @@ const singleUpload = multer({
     limits: {
         fileSize: (1024 * 1024) * 5,
     }
-}).single("avatar");
+});
 export default singleUpload;
 // const a = multer.diskStorage({
 //     destination(err,req,callback){

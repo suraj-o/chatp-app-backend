@@ -30,5 +30,5 @@ const schema = new Schema(
     }
 );
 
-const Messages = mongoose.model<MessagesType>("Messages",schema)
+export const Messages = mongoose.model<MessagesType>("Messages",schema)
 

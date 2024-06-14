@@ -1,7 +1,8 @@
+import { Request } from "express";
 import { User } from "../models/userModel.js";
 import {faker} from "@faker-js/faker"
 
-export const emit=(req:any,event:string,users:any[],data?:string)=>{
+export const emit=(req:Request,event:string,users:any,data?:any)=>{
 console.log(users);
 }
 
