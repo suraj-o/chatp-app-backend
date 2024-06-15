@@ -7,7 +7,7 @@ export function connectDB(url) {
         .catch((error) => console.log(error));
 }
 export const sendCookies = (user, res, message, status) => {
-    const token = jwt.sign({ _id: user.id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
     const cookieOption = {
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,

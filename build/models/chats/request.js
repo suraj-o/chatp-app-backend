@@ -16,4 +16,4 @@ const schema = new Schema({
 }, {
     timestamps: true
 });
-const Messages = mongoose.model("Messages", schema);
+export const fRequest = mongoose.model("Request", schema);

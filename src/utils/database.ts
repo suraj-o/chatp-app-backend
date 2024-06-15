@@ -12,7 +12,7 @@ export function connectDB(url:string){
 }
 
 export const sendCookies=(user:UserType,res:Response,message:string,status:number):Response=>{
-    const token =jwt.sign({_id:user.id},process.env.JWT_SECRET!)
+    const token =jwt.sign({_id:user._id},process.env.JWT_SECRET!)
 
     const cookieOption={
         maxAge:24 * 60 * 60 * 1000,

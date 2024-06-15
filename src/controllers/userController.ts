@@ -1,13 +1,15 @@
+import { compare } from "bcrypt";
 import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import { TryCatch } from "../middlewares/errorMiddleware.js";
+import { Chats } from "../models/chats/chat.js";
 import { User } from "../models/userModel.js";
 import ErrorNewobject from "../utils/customErrorObj.js";
-import { TryCatch } from "../middlewares/errorMiddleware.js";
-import { OptionTypes, SignupRequetType } from "./controllertypes/usercontrollerType.js";
 import { sendCookies, verifyToken } from "../utils/database.js";
-import { compare } from "bcrypt";
-import jwt from "jsonwebtoken"
-import { Chats } from "../models/chats/chat.js";
-import { createUSers } from "../utils/feture.js";
+import { SignupRequetType } from "./controllertypes/usercontrollerType.js";
+import { fRequest } from "../models/chats/request.js";
+import { emit } from "../utils/feture.js";
+import { FETCH_DATA } from "../constants/chatsEvents.js";
 
 export const signup=TryCatch(async(
     req:Request<{},{},SignupRequetType>,
@@ -97,9 +99,93 @@ export const search=TryCatch(async(req:Request,res:Response,next:NextFunction)=>
             $regex:name?.toString() ,
             $options: "i"
         }})
-        createUSers(12)
-        res.json({sucess:true,allExcludeMembers})
-         
 
-    // const chatsIcludesMe=user
+        res.status(200).json({
+            sucess:true,
+            allExcludeMembers
+        })
+})
+
+export const sendRequest=TryCatch(async(req:Request,res:Response,next:NextFunction)=>{
+    const {reciver}=req.body;
+    const id=verifyToken(req.cookies["_id"],process.env.JWT_SECRET as string);
+
+    const sentRequsetCheck= await fRequest.findOne({
+        $or:[
+            {sender:id,reciver},
+            {sender:reciver,reciver:id}
+        ]
+    })
+
+    if(sentRequsetCheck) return next(new ErrorNewobject("request already sent",400));
+
+    const request= await fRequest.create({
+        sender:id,
+        reciver,
+    })
+
+    res.status(200).json({
+        success:true,
+        request
+    })
+})
+
+export const acceptRequest=TryCatch(async(req:Request<{},{},{requestId:string,accept:boolean}>,res:Response,next:NextFunction)=>{
+   const {requestId,accept}=req.body;
+   const me =verifyToken(req.cookies["_id"],process.env.JWT_SECRET as string) as {_id:string,iat:number};
+
+      const requestD = await fRequest.findOne({_id:requestId}).populate("sender","name").populate("reciver","name");
+      if(!requestD) return next(new ErrorNewobject("Invalid request id",404));
+
+    if(requestD.reciver._id?.toString() !== me._id){
+        return next(new ErrorNewobject("you have not permisson to accecpt this request",400))
+    }
+
+        if(!accept){
+            await requestD.deleteOne();
+
+            return res.status(200).json({
+                success:true,
+                message:"request rejected"
+            })
+        }
+
+        let members = [requestD.reciver,me];
+    
+    await Promise.all([
+        Chats.create({
+            name:`${requestD.sender.name}-${requestD.reciver.name}`,
+            creaotr:requestD.sender,
+            members:[
+                requestD.sender,
+                requestD.reciver
+            ]
+        }),requestD.deleteOne()
+    ])
+    emit(req,FETCH_DATA,members)
+    res.status(200).json({
+        success:true,
+        message:"now you have connected with this user",
+    })
+})
+
+export const getAllnotification=TryCatch(async(req:Request,res:Response,next:NextFunction)=>{
+    const id= verifyToken(req.cookies["_id"],process.env.JWT_SECRET as string);
+
+    const pendingRequest=await fRequest.find({reciver:id}).populate("sender","name avatar");
+            if(!pendingRequest) return next(new ErrorNewobject("no request found",404));
+
+            const transFormedRequest=pendingRequest.map((request)=>{
+                return {
+                    _id:request._id,
+                    senderId:request.sender._id,
+                    name:request.sender.name,
+                    avatar:request.sender.avatar.url
+                }
+            })
+
+    res.status(200).json({
+        sucess:true,
+        requests:transFormedRequest
+    })
 })

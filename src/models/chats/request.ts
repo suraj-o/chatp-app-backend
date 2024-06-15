@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { MessagesType } from "../types/chats/messageTypes.js";
+import { RequestType } from "../types/chats/request.js";
 
 const schema = new Schema(
     {
@@ -22,5 +22,5 @@ const schema = new Schema(
     }
 );
 
-const Messages = mongoose.model<MessagesType>("Messages",schema)
+export const fRequest = mongoose.model<RequestType>("Request",schema)
 

@@ -17,7 +17,7 @@ export const newgroupChat=TryCatch(async(req:Request<{},{},ChatRequestType>
 
     let groupchat:boolean=false;
 
-    if(members.length>2) groupchat=true;
+    if(members.length > 2) groupchat=true;
 
     const id=verifyToken(req.cookies["_id"],process.env.JWT_SECRET as string);
 
@@ -94,7 +94,6 @@ export const myGroups=TryCatch(async(req:Request,res:Response,next:NextFunction)
     })
 })
 
- 
 export const addMembers=TryCatch(async(req:Request<{},{},{chatId:string,members:string[]}>
     ,res:Response,next:NextFunction)=>{
         const {chatId,members}= req.body;
@@ -130,9 +129,8 @@ export const addMembers=TryCatch(async(req:Request<{},{},{chatId:string,members:
             sucess:true,
             allmemebrList
         })
-    })
-    
-    
+})
+      
 export const sendAttachment=TryCatch(async(req:Request,res:Response,next:NextFunction)=>{
     const {chatId}= req.body;
     const myId= verifyToken(req.cookies["_id"],process.env.JWT_SECRET as string);

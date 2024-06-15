@@ -6,10 +6,14 @@ import { config } from "dotenv";
 import morgan from "morgan"
 import cookieparser from "cookie-parser"
 import chatRoute from "./routes/chat.js";
+import {createServer} from "http"
+import { Server, Socket } from "socket.io";
 
 // intializing express server 
 
 const app =express();
+const server=createServer(app);
+const io=new Server(server,{})
 
 config({
     path:"./.env"
@@ -34,9 +38,17 @@ app.use(cookieparser())
 app.use('/api/v1/user/',userRoute);
 app.use('/api/v1/chat/',chatRoute);
 
+io.on("connection",(soket)=>{
+    console.log(soket.id)
+
+    soket.on("NEW_MESSAGE",(data)=>{
+        console.log(data)
+    })
+})
+
 //handling global errors and custom errors  
 app.use(errorMiddlewere);
 
 // defining port of server
-app.listen(9000,()=>{console.log("server working on port 8000")})
+server.listen(9000,()=>{console.log("server working on port 9000")})
 

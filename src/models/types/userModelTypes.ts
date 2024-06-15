@@ -1,5 +1,5 @@
 export interface UserType extends Document {
-    id?:string,
+    _id?:string,
     name:string,
     password:string,
     email:string,
